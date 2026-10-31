@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Envoyer un email - Final</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 450px;
+        }
+        h2 { text-align: center; color: #1a202c; margin-bottom: 20px; font-size: 22px; }
+        label { display: block; margin-top: 15px; font-weight: 600; color: #4a5568; font-size: 14px; }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        input:focus, textarea:focus { outline: none; border-color: #3182ce; }
+        textarea { resize: vertical; min-height: 100px; }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: background-color 0.2s;
+        }
+        button:hover { background-color: #2b6cb0; }
+        button:disabled { background-color: #a0aec0; cursor: not-allowed; }
+        .status {
+            margin-top: 20px;
+            text-align: center;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+        }
+        .status.success { background: #c6f6d5; color: #22543d; display: block; }
+        .status.error { background: #fed7d7; color: #742a2a; display: block; word-break: break-all;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📧 Envoyer un email</h2>
+    <form id="email-form">
+        
+        <!-- Le name est "name" pour correspondre à votre template EmailJS -->
+        <label for="name">Nom de l'expéditeur (affiché)</label>
+        <input type="text" id="name" name="name" placeholder="Ex : École" required>
+
+        <label for="to_email">Email du destinataire</label>
+        <input type="email" id="to_email" name="to_email" placeholder="client@exemple.com" required>
+
+        <label for="subject">Sujet</label>
+        <input type="text" id="subject" name="subject" placeholder="Objet du message" required>
+
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Écrivez votre message ici..." required></textarea>
+
+        <button type="submit" id="submit-btn">Envoyer l'email</button>
+        <div id="status" class="status"></div>
+    </form>
+</div>
+
+<!-- Importation de la librairie EmailJS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<script type="text/javascript">
+    // Initialisation avec votre clé publique
+    emailjs.init("RD-yXUZIQBg-sOYJ7");
+
+    const form = document.getElementById('email-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const statusDiv = document.getElementById('status');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Empêche la page de se recharger
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Envoi en cours...';
+        statusDiv.className = 'status';
+        statusDiv.style.display = 'none';
+
+        // Envoi avec votre Service ID et votre VRAI Template ID (template_tkd3eit)
+        emailjs.sendForm('service_18icdds', 'template_tkd3eit', this)
+            .then(function() {
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ Email envoyé avec succès !';
+                form.reset(); 
+            }, function(error) {
+                statusDiv.className = 'status error';
+                // Affiche l'erreur de manière lisible
+                statusDiv.textContent = '❌ Erreur : ' + (error.text || JSON.stringify(error));
+                console.error('Échec de l\'envoi...', error);
+            })
+            .finally(function() {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Envoyer l'email";
+            });
+    });
+</script>
+
+</body>
+</html>
